@@ -207,12 +207,46 @@ In a browser enter the IP address - this is preferably done in an In-Private ses
 ![alt text](images/nginx-challenge.png "Challenge")
 
 Enter credentials:
-![alt text](images/nginx-filled-in.png "Challenge")
+![alt text](images/nginx-filled-in.png "Enter credentials")
 
 Finally success - we have hit the main app.
-![alt text](images/nginx-success.png "Challenge")
-
+![alt text](images/nginx-success.png "Success")
 
 # Troubleshooting
+The main approaches to troubleshooting involve:
+1. looking at the container logs
+2. Getting a shell into the NGINX container to see if the configuration has been mounted correctly
+3. Usinp port forward to test that the target app is alive on the expected port.
+
+## Container logs
+Find the name of the pods
+```
+kubectl get pods
+```
+then using the above
+```
+kubectl logs <your-pod-name>
+```
+Do the logs make sense? Are there errors?
+
+## Shell onto the container
+```
+kubectl exec -it <your-pod-name>  -- /bin/bash
+``
+it is then best to cd to /etc/nginx and look:
+1. is there an *nginx.config* file and if you *cat* it's contents, is these what you expect?
+2. look for the file *.hppasswd* - this may require an *ls -al* command. Is it a file or folder. If you cat the file, can you see some representation of the secret e.g.
+```
+myuser:$apr1$uC1YlKTK$eIpilUrb3/4cOmUgEZlhf1
+```
+## Port forward to the target app
+```
+kubectl port-forward <your-app-pod> 8090:80
+```
+In the above, the port forward will map to localhost:8090. You can choose a port to suit.
 
 # Summary
+NGINX can be really useful as a quick means of putting some basic authentication in front of a service in Kubernetes - this is especially useful for quick tests.
+
+The main stumbing block can be the configuration of secrets for NGINX, but hopefully there is enough in the is repo to help.
+

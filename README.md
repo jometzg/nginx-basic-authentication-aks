@@ -232,7 +232,7 @@ Do the logs make sense? Are there errors?
 ## Shell onto the container
 ```
 kubectl exec -it <your-pod-name>  -- /bin/bash
-``
+```
 it is then best to cd to /etc/nginx and look:
 1. is there an *nginx.config* file and if you *cat* it's contents, is these what you expect?
 2. look for the file *.hppasswd* - this may require an *ls -al* command. Is it a file or folder. If you cat the file, can you see some representation of the secret e.g.

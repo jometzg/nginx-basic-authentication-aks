@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+     replicas: 1
+     selector:
+       matchLabels:
+         app: my-nginx
+     template:
+       metadata:
+         labels:
+           app: my-nginx
+       spec:
+         containers:
+         - name: my-nginx
+           image: nginx:latest
+           ports:
+           - containerPort: 80
+           volumeMounts:
+           - name: nginx-config
+             mountPath: /etc/nginx/nginx.conf
+             subPath: nginx.conf
+           - name: auth-secret
+             mountPath: /etc/nginx/.htpasswd
+             subPath: .htpasswd
+             readOnly: true
+         volumes:
+         - name: nginx-config
+           configMap:
+             name: my-nginx-config
+         - name: auth-secret
+           secret:
+             secretName: nginx-htpasswd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx
+spec:
+     type: LoadBalancer
+     selector:
+       app: my-nginx
+     ports:
+     - name: http
+       port: 80
+       targetPort: 80   

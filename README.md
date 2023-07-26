@@ -176,3 +176,43 @@ From above, you can see:
 5. The second volume mount is that of the secrets and it mounts these in a file at /etc/nginx/.htpasswd - this is read-only
 6. Both the deployment and the service are exposeed on port 80.
 
+# Testing
+As the NGINX endpoint is set as LoadBalancer, it will expose a public IP address. To find this IP address:
+
+```
+>kubectl describe service my-nginx
+
+Name:                     my-nginx
+Namespace:                default
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 app=my-nginx
+Type:                     LoadBalancer
+IP Family Policy:         SingleStack
+IP Families:              IPv4
+IP:                       10.0.253.243
+IPs:                      10.0.253.243
+LoadBalancer Ingress:     <my-public-ip-address>
+Port:                     http  80/TCP
+TargetPort:               80/TCP
+NodePort:                 http  30385/TCP
+Endpoints:                10.244.2.39:80
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+```
+The *Load balancer Ingress* setting will have your public IP address. 
+
+In a browser enter the IP address - this is preferably done in an In-Private session:
+![alt text](images/nginx-challenge.png "Challenge")
+
+Enter credentials:
+![alt text](images/nginx-filled-in.png "Challenge")
+
+Finally success - we have hit the main app.
+![alt text](images/nginx-success.png "Challenge")
+
+
+# Troubleshooting
+
+# Summary
